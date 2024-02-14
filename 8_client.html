@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" >
+<title>ディレクトリ　5_2_1_b_5</title>
+<link rel="stylesheet" type="text/css" href="/static/styles.css">
+</head>
+
+<body>
+<!-- ボタン id="button_1" type="submit" -->
+<h1>スイッチ○○</h1>
+<button id="button_1" type="submit">
+<!-- ボタンの文字 -->
+<div id="switch_1_value"></div>
+</button>
+<!-- 表示 id="output" -->
+<h1><div id="output"></h1>
+<br>
+  
+<!-- 表示 測定値 -->
+<h1>測定値</h1>
+<h2><div id="result_1"></div></h2> 	<!-- id="result_1"の表示 -->
+
+<!-- 以下はスクリプト -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function () {
+var socket = io.connect(['ws://localhost:8080','http://192.168.11.42:8080']);  //PC
+var output = document.getElementById('output');
+var button_1 = document.getElementById('button_1');
+var switch_1_value = document.getElementById('switch_1_value');
+var result_1 = document.getElementById('result_1');
+
+// socket.ioの接続
+//socket.on('connect', function () {    // アロー関数へ変更前
+socket.on('connect', () => {            // アロー関数へ変更後
+  
+///////////////////////////////////////
+// (接続直後)と（定期的）なイベント受信
+// socket.ioイベント（'read_switch_1_data'）の受信　ファイル（switch_1.txt）のデータ
+//socket.on('read_switch_1_data', function(switch_1_data) {	// アロー関数へ変更前
+socket.on('read_switch_1_data', (switch_1_data) => {		// アロー関数へ変更後
+
+if(switch_1_data == 'ON') {
+document.getElementById("button_1").className="ON";    // styles.cssのbutton.ONへ
+}
+else if (switch_1_data == 'OFF') {
+document.getElementById("button_1").className="OFF";   // styles.cssのbutton.OFFへ
+}
+switch_1_value.innerHTML = switch_1_data;   // （クリック前）ボタンの文字へ
+});
+
+
+///////////////////////////////////////
+// (接続直後)と（定期的）なイベント受信
+// socket.ioイベント（'read_result_1_data'）の受信　ファイル（result_1.txt）のデータ
+//socket.on('read_result_1_data', function(result_1_data) {    // アロー関数へ変更前
+socket.on('read_result_1_data', (result_1_data) => {		// アロー関数へ変更後
+result_1.innerHTML = '<div>  〇〇: '+ result_1_data +'  [〇]</div>';    // 表示（id=result_1）へ
+});
+
+//////////////////////////////
+// button_1　クリック後
+// イベント（button_1）の処理
+//button_1.addEventListener('click', function() {	// アロー関数へ変更前
+button_1.addEventListener('click', () => {		// アロー関数へ変更後
+// socket.ioイベント（req_button_1）の発信
+socket.emit('req_button_1', 'クライアント');
+// socket.ioイベント（res_button_1）の待機と受信　　ファイル（switch_1.txt）のデータ
+//socket.on('res_button_1', function(switch_1_data, re_switch_1_data) {	// アロー関数へ変更前
+socket.on('res_button_1', (switch_1_data, re_switch_1_data) => {		// アロー関数へ変更後
+output.innerHTML = '<div>'+ switch_1_data + ' ⇒ ' + re_switch_1_data +'</div>'; //表示（id=output）へ
+if(re_switch_1_data == 'ON') {
+document.getElementById("button_1").className="ON";
+}
+else if (re_switch_1_data == 'OFF') {
+document.getElementById("button_1").className="OFF";
+}
+switch_1_value.innerHTML = re_switch_1_data;   // （クリック後）ボタンの文字へ
+});
+});
+
+});
+
+}());
+</script>
+</body>
+</html>
+
