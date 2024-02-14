@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+  ：
+<body>
+ <button id="button_1">送信 1</button>
+ <div id="output"></div>
+
+  :
+  <script>
+    (function(){
+      :
+     //socket.ioの接続
+     socket.on('connect',()=>{
+
+       //イベント(button_1)の処理
+       button_1.addEventListener('click',function(){
+
+       //イベント（req_button_1）の発信
+	     socket.emit('req_button_1', 'クライアント');
+         
+	     // イベント（res_button_1）の待機と受信
+	     socket.on('res_button_1', function(switch_1_data, re_switch_1_data) {
+	      output.innerHTML = '<div>'+ switch_1_data + ' ⇒ ' + re_switch_1_data +'</div>';
+       });
+       });
+
+     });
+
+    }());
+  </script>
+</body>
+</html>
