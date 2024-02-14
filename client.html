@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+ <meta charset="UTF-8" />
+ <title>ディレクトリ　Lesson-1</title>
+</head>
+
+<body>
+ <button id="button_1">送信 1</button>
+
+ <script src="/socket.io.js"></script>
+ <script>
+   (function(){
+     var socket=io.connect(['ws://localhost:8080','http://192.168.11.42:8080']);  //PC
+     var button_1=document.getElementById('button_1');
+
+    //socket.on('connect',function(){  //アロー関数へ変更前
+    socket.on('connect',()=>{         //アロー関数へ変更後
+              button_1.addEventLister('ckick',function(){
+                socket.emit('req_button_1','クライアント');
+              });
+    });
+   }());
+ </script>
+</body>
+</html>
