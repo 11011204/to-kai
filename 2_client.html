@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta charset="UTF-8" />
+ <title>ディレクトリ　Lesso_2</title>
+</head>
+
+<body>
+  <button id="button_1">送信 1</button>
+  <div id="output"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    (function(){
+      var socket=io.connect(['ws//localhost:8080','http://192.168.11.42:8080']);  //PC
+     var output = document.getElementById('output');
+     var button_1 = document.getElementById('button_1');
+
+    // socket.ioの接続
+    socket.on('connect', () => {      // アロー関数へ変更後
+
+      //イベント(button_1)の処理
+      button_1.addEventListener('click',function()
+      //イベント(req_button_1)の発信
+      socket.emit('req_button_1','クライアント');
+      
+      //イベント(res_button_1)の待機と受信
+      socket.on('res_button_1',function(swich_1_data){
+        output.innerHTML='<div>ファイル(switch_1.txt)のデータ:'+ switch_1_data +'</div>';
+      });
+    });
+    });
+
+    }());
+  </script>
+</body>
+</html>
